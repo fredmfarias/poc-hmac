@@ -35,7 +35,8 @@ namespace PocHmacClient
                 Console.WriteLine("Failed to call the API. HTTP Status: {0}, Reason {1}", getResponse.StatusCode, getResponse.ReasonPhrase);
             }
 
-            var order = new Order { OrderID = 10248, CustomerName = "Taiseer Joudeh", ShipperCity = "Amman", IsShipped = true };
+            //var order = new Order { OrderID = 10248, CustomerName = "Taiseer Joudeh", ShipperCity = "Amman", IsShipped = true };
+            var order = new Foo("webhook");
             string json = JsonConvert.SerializeObject(order);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage postResponse = await client.PostAsync(url, content);
@@ -90,6 +91,8 @@ namespace PocHmacClient
                 string signatureRawData =
                     $"{APPId}{requestHttpMethod}{requestUri}{requestTimeStamp}{nonce}{requestContentBase64String}";
 
+                Console.WriteLine(signatureRawData);
+
                 var secretKeyByteArray = Convert.FromBase64String(APIKey);
 
                 byte[] signature = Encoding.UTF8.GetBytes(signatureRawData);
@@ -99,7 +102,7 @@ namespace PocHmacClient
                     byte[] signatureBytes = hmac.ComputeHash(signature);
                     string requestSignatureBase64String = Convert.ToBase64String(signatureBytes);
                     //Setting the values in the Authorization header using custom scheme (amx)
-                    request.Headers.Authorization = new AuthenticationHeaderValue("amx",
+                    request.Headers.Authorization = new AuthenticationHeaderValue("hmac",
                         $"{APPId}:{requestSignatureBase64String}:{nonce}:{requestTimeStamp}");
                 }
 

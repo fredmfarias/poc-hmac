@@ -14,7 +14,7 @@ namespace PocHmacServer.Controllers
         public IEnumerable<string> Get() => new[] { "value1", "value2" };
 
         [HttpPost]
-        public void Post([FromBody] Order order)
+        public void Post([FromBody] Foo foo)
         {
         }
     }

@@ -18,7 +18,7 @@ namespace PocHmacServer.Handlers
     public class HMACAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private const ulong _REQUEST_MAX_AGE_IN_SECONDS = 300; //5 mins
-        private const string _AUTHENTICATION_SCHEME = "amx";
+        private const string _AUTHENTICATION_SCHEME = "hmac";
 
         private static readonly DateTime _1970 = new DateTime(1970, 01, 01, 0, 0, 0, 0, DateTimeKind.Utc);
         private static readonly Dictionary<string, string> _AllowedApps = new Dictionary<string, string>();
