@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PocHmacServer.Models;
+using System;
 using System.Collections.Generic;
+
 
 namespace PocHmacServer.Controllers
 {
@@ -14,8 +16,9 @@ namespace PocHmacServer.Controllers
         public IEnumerable<string> Get() => new[] { "value1", "value2" };
 
         [HttpPost]
-        public void Post([FromBody] Foo foo)
+        public void Post([FromBody] EventNotification[] foo)
         {
+            Console.WriteLine(".");
         }
     }
 }

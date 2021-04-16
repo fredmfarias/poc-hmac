@@ -48,10 +48,10 @@ namespace PocHmacServer.Handlers
 
                     if (autherizationHeaderArray != null)
                     {
-                        var appId = autherizationHeaderArray[0];
-                        var incomingBase64Signature = autherizationHeaderArray[1];
-                        var nonce = autherizationHeaderArray[2];
-                        var requestTimeStamp = autherizationHeaderArray[3];
+                        var appId = headers["PublicKey"].ToString();
+                        var incomingBase64Signature = autherizationHeaderArray[0];
+                        var nonce = headers["Nonce"].ToString();
+                        var requestTimeStamp = headers["RequestTimeStamp"].ToString();
 
                         var request = Context.Request;
                         var isValid = await IsValidRequestAsync(request, appId, incomingBase64Signature, nonce, requestTimeStamp);
@@ -87,7 +87,7 @@ namespace PocHmacServer.Handlers
             if (IsReplayRequest(nonce, requestTimeStamp)) return false;
 
             request.EnableBuffering();
-            byte[] hash = await ComputeHashAsync(request.Body);
+            byte[] hash = await GetBytesAsync(request.Body);// await ComputeHashAsync(request.Body);
             request.Body.Position = 0;
 
             if (hash != null)
@@ -95,7 +95,7 @@ namespace PocHmacServer.Handlers
                 requestContentBase64String = Convert.ToBase64String(hash);
             }
 
-            var data = $"{appId}{requestHttpMethod}{requestUri}{requestTimeStamp}{nonce}{requestContentBase64String}";
+            var data = $"{appId}{requestUri}{requestTimeStamp}{nonce}{requestContentBase64String}";
 
             var secretKeyBytes = Convert.FromBase64String(sharedKey);
 
@@ -126,7 +126,7 @@ namespace PocHmacServer.Handlers
         private static string[] GetAutherizationHeaderValues(string rawAuthzHeader)
         {
             var credArray = rawAuthzHeader.Split(' ')[1].Split(':');
-            return credArray.Length == 4 ? credArray : null;
+            return credArray.Length == 1 ? credArray : null;
         }
 
         private static async Task<byte[]> ComputeHashAsync(Stream body)
